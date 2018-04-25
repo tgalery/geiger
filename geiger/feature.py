@@ -28,5 +28,7 @@ def get_sentiment_vector(word):
     Returns: [polarity, subjectivity]
     """
     wb = get_word_blob(word)
-    if wb: return [wb.sentiment.polarity, wb.sentiment.subjectivity]
-    else: return [0 ,0 ]
+    if wb:
+        return [wb.sentiment.polarity, wb.sentiment.subjectivity]
+    else:
+        return [0, 0]
