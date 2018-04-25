@@ -2,6 +2,8 @@
 import functools
 from textblob import TextBlob
 import logging
+import spacy
+nlp = spacy.load('en_core_web_lg')
 
 def load_file(path, encoding="utf-8"):
     """
@@ -28,5 +30,13 @@ def memoize(func):
     return memoized_func
 
 @memoize
-def get_word_blob(word):
-    return TextBlob(word)
+def get_text_blob(text):
+    return TextBlob(text)
+
+@memoize
+def get_text_nlp(text):
+    return nlp(text)
+
+@memoize
+def nlp_get_word_vector(word):
+    return nlp.vocab.get_vector(word)
