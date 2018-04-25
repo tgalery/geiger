@@ -1,6 +1,6 @@
 from os import path
 
-from geiger.utils import load_file, get_word_blob, nlp_get_word_vector, get_text_nlp
+from geiger.utils import load_file, get_text_blob, nlp_get_word_vector, get_text_nlp
 
 ROOT_DIR = path.abspath(__file__).rsplit("/geiger", 1)[0]
 

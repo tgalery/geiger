@@ -29,4 +29,4 @@ def test_word_vector():
 def test_word_is_stop():
     word = "the"
     is_stop = get_word_is_stop(word)
-    assert is_stop == True
+    assert is_stop == False
