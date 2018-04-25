@@ -1,6 +1,6 @@
 from os import path
 
-from geiger.utils import load_file
+from geiger.utils import load_file, get_word_blob
 
 ROOT_DIR = path.abspath(__file__).rsplit("/geiger", 1)[0]
 
@@ -18,3 +18,17 @@ def is_bad_word(word):
     Returns: bool
     """
     return word.lower() in BAD_WORDS
+
+def get_sentiment_vector(word):
+    """
+    Retrieve sentiment vector of word.
+    Args:
+        word: str: word to be evaluated
+
+    Returns: [polarity, subjectivity]
+    """
+    wb = get_word_blob(word)
+    if wb:
+        return [wb.sentiment.polarity, wb.sentiment.subjectivity]
+    else:
+        return [0, 0]

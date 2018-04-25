@@ -1,5 +1,5 @@
 """General utilities"""
-
+from textblob import TextBlob
 
 def load_file(path, encoding="utf-8"):
     """
@@ -14,3 +14,6 @@ def load_file(path, encoding="utf-8"):
     with open(path, encoding=encoding) as in_file:
         for l in in_file:
             yield l.strip()
+
+def get_word_blob(word):
+    return TextBlob(word)
