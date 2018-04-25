@@ -32,3 +32,10 @@ def get_sentiment_vector(word):
         return [wb.sentiment.polarity, wb.sentiment.subjectivity]
     else:
         return [0, 0]
+
+def get_pos_tag(word):
+    wb = get_word_blob(word)
+    if wb:
+        return wb.tags[0][1]
+    else:
+        return 'NN'
