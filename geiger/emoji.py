@@ -1,25 +1,29 @@
 import unicodedata
 import re
 
-def check_if_emoji(text):
-	"""args: string
-	returns: True if string is an emoji"""
-	emoji_exp = re.compile('[\U0001F602-\U0001F64F]')
-	m = re.match(emoji_exp,text)
-	if re.match(emoji_exp,text):
-		is_emoji = True
-	else:
-		is_emoji = False
-	return is_emoji
+EMOJI_EXP = re.compile('[\U0001F602-\U0001F64F]')  # Commpile regex for re use
 
-def emoji_to_description(emoji):
-	"""args: emoji
-	returns: description in lower case
-	"""
-	return unicodedata.name(emoji).lower()
 
-def tokenise_description(string):
-	"""args: string, description of emoji
-	returns: list, tokenised string
-	"""
-	return string.split(" ")
+def is_emoji(word):
+    """
+    Determine if token is emoji or not
+    Args:
+        word: str: word to be determined as emoji
+
+    Returns:
+
+    """
+    m = re.match(EMOJI_EXP, word)
+    return True if m else False
+
+
+def get_emoji_description(emoji):
+    """
+    Retrieve emoji description
+    Args:
+        emoji: str: emoji's description
+
+    Returns: str
+
+    """
+    return unicodedata.name(emoji).lower()
