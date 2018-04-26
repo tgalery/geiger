@@ -1,5 +1,5 @@
 googletrans
-gensim
+jupyter
 keras
 numpy
 scipy

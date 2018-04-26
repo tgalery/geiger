@@ -70,3 +70,24 @@ def to_np_array(word, *arr):
 def load_word_vectors(fpath):
 
     return dict(to_np_array(*vec_line.rsplit(' ')) for vec_line in load_file(fpath))
+
+
+def load_coling_data(dir_name):
+    """
+    Load Coling data
+    Args:
+        dir_name:
+
+    Returns:
+    """
+    col_names = ['id', 'text', 'class']
+    train = pd.read_csv(os.path.join(dir_name, "agr_en_train.csv"), names=col_names)
+    dev = pd.read_csv(os.path.join(dir_name, "agr_en_dev.csv"), names=col_names)
+
+    x_train = train["text"].fillna("fillna").values
+    y_train = train["class"].fillna("fillna").values
+
+    x_dev = dev["text"].fillna("fillna").values
+    y_dev = dev["class"].fillna("fillna").values
+    return x_train, x_dev, y_train, y_dev
+
