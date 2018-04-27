@@ -44,5 +44,5 @@ class MultiLangVectorStore:
                 if word_vec:
                     vecs.append(word_vec)
             except ValueError:
-                print("Can't get words for lang {}".format(lang))
+                pass
         return vecs

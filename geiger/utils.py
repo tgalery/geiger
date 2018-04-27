@@ -3,9 +3,12 @@ import os
 
 import numpy as np
 import pandas as pd
+import pycld2 as cld2
 from textblob import TextBlob
 from tqdm import tqdm
 from geiger.libs.fastText_multilingual import fasttext
+import unicodedata
+
 
 def get_file_lines(fpath):
     output = os.popen('wc -l {}'.format(fpath)).read()
@@ -92,4 +95,22 @@ def load_coling_data(dir_name):
     x_dev = dev["text"].values
     y_dev = dev["class"].values
     return x_train, x_dev, y_train, y_dev
+
+
+def is_devanagari(word):
+    try:
+        return any((unicodedata.name(c).startswith("DEVANAGARI") for c in word))
+    except Exception as ex:
+        print("Got {}".format(ex))
+        return False
+
+
+def find_ngrams(input_list, n):
+    return ["".join(t) for t in zip(*[input_list[i:] for i in range(n)])]
+
+
+def generate_n_grams(pseudo_word):
+    n_gram_len = min(len(pseudo_word), 3)
+    return find_ngrams(pseudo_word, n_gram_len)
+
 

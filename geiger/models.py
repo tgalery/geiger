@@ -1,6 +1,7 @@
 from keras.models import Model
 from keras.layers import Input, Dense, Embedding, GlobalMaxPooling1D, SpatialDropout1D, concatenate
 from keras.layers import GRU, Bidirectional, GlobalAveragePooling1D
+from geiger import evaluate
 
 
 def build_pooled_gru(num_classes, vocab_size, max_seq_len, embedding_matrix,

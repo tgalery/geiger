@@ -24,4 +24,4 @@ def one_hot_decode(class_array):
 
     """
     class_idx = class_array.index(1)
-    return COLING_CLASSES[class_idx]
+    return COLING_CLASSES[int(class_idx)]
