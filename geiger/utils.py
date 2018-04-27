@@ -87,7 +87,7 @@ def load_coling_data(dir_name):
     x_train = train["text"].fillna("fillna").values
     y_train = train["class"].fillna("fillna").values
 
-    x_dev = dev["text"].fillna("fillna").values
-    y_dev = dev["class"].fillna("fillna").values
+    x_dev = dev["text"].values
+    y_dev = dev["class"].values
     return x_train, x_dev, y_train, y_dev
 

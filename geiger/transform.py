@@ -23,7 +23,7 @@ class KerasTransformer:
         self.max_seq_len = max_seq_len
         self.tokenizer = text.Tokenizer(num_words=max_features)
         self.build_vocabulary([self.preprocess_text(t) for t in x_texts])
-        self.rel_features = min(self.max_features, len(self.tokenizer.word_index))
+        self.rel_features = min(self.max_features, len(self.tokenizer.word_index) + 1)
 
     def build_vocabulary(self, x_texts):
         """
@@ -67,8 +67,9 @@ class KerasTransformer:
 
         embedding_matrix = np.zeros((self.rel_features, embedding_size))
         for word, i in self.tokenizer.word_index.items():
-            if i >= self.rel_features:
-                pass
+            # need to correct as word_index[0] is reserved
+            if i >= self.max_features:
+                return embedding_matrix
             else:
                 embedding_vector = embedding_lookup.get(word)
                 if embedding_vector is not None:

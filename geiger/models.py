@@ -25,10 +25,10 @@ def build_pooled_gru(num_classes, vocab_size, max_seq_len, embedding_matrix,
     avg_pool = GlobalAveragePooling1D()(x)
     max_pool = GlobalMaxPooling1D()(x)
     conc = concatenate([avg_pool, max_pool])
-    outp = Dense(num_classes, activation="sigmoid")(conc)
+    outp = Dense(num_classes, activation="softmax")(conc)
 
     model = Model(inputs=sequence_input, outputs=outp)
-    model.compile(loss='binary_crossentropy',
+    model.compile(loss='categorical_crossentropy',
                   optimizer='adam',
                   metrics=['accuracy'])
     return model
