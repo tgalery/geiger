@@ -8,3 +8,4 @@ pandas
 tqdm
 tensorflow
 textblob
+git+git://github.com/jucor/tweetokenize.git
