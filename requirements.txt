@@ -1,7 +1,10 @@
+googletrans
+jupyter
 keras
 numpy
 scipy
 scikit-learn
 pandas
+tqdm
 tensorflow
 textblob

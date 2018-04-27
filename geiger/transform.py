@@ -22,7 +22,8 @@ class KerasTransformer:
         self.max_features = max_features
         self.max_seq_len = max_seq_len
         self.tokenizer = text.Tokenizer(num_words=max_features)
-        self.build_vocabulary(x_texts)
+        self.build_vocabulary([self.preprocess_text(t) for t in x_texts])
+        self.rel_features = min(self.max_features, len(self.tokenizer.word_index))
 
     def build_vocabulary(self, x_texts):
         """
@@ -34,6 +35,10 @@ class KerasTransformer:
 
         """
         self.tokenizer.fit_on_texts(x_texts)
+
+    @staticmethod
+    def preprocess_text(text):
+        return text.replace('“', ' " ').replace("'", " ' ")
 
     def texts_to_seq(self, texts, pad=True):
         """
@@ -59,11 +64,11 @@ class KerasTransformer:
 
         Returns: np.array
         """
-        nb_words = min(self.max_features, len(self.tokenizer.word_index))
-        embedding_matrix = np.zeros((nb_words, embedding_size))
+
+        embedding_matrix = np.zeros((self.rel_features, embedding_size))
         for word, i in self.tokenizer.word_index.items():
-            if i >= nb_words:
-                return embedding_matrix
+            if i >= self.rel_features:
+                pass
             else:
                 embedding_vector = embedding_lookup.get(word)
                 if embedding_vector is not None:
@@ -71,5 +76,6 @@ class KerasTransformer:
                     embedding_matrix[i] = embedding_vector
                 else:
                     # Todo we are setting the vectors of <UNK> as zeros, maybe there's a better way
+                    print("Word {} is out of vocabulary.".format(word))
                     continue
         return embedding_matrix
