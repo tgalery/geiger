@@ -59,7 +59,7 @@ class KerasTransformer:
         Generate an embedding matrix [vocab_size, n_dimensions]
 
         Args:
-            embedding_lookup: dict: like interface that implements a .get method
+            embedding_lookup: dict: like interface that implements .get_vector and .get_vectors methods
             embedding_size: int: dimensionality of embedding
 
         Returns: np.array
@@ -71,7 +71,8 @@ class KerasTransformer:
             if i >= self.max_features:
                 return embedding_matrix
             else:
-                embedding_vector = embedding_lookup.get(word)
+                lang = "en"
+                embedding_vector = embedding_lookup.get_vector(word, lang)
                 if embedding_vector is not None:
                     # TODO, we need to feature augumentation here if we are feeding this to the neuronet
                     embedding_matrix[i] = embedding_vector

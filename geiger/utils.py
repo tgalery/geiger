@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from textblob import TextBlob
 from tqdm import tqdm
-
+from geiger.libs.fastText_multilingual import fasttext
 
 def get_file_lines(fpath):
     output = os.popen('wc -l {}'.format(fpath)).read()
@@ -67,9 +67,11 @@ def to_np_array(word, *arr):
     return word, np.asarray(arr, dtype='float32')
 
 
-def load_word_vectors(fpath):
-
-    return dict(to_np_array(*vec_line.rsplit(' ')) for vec_line in load_file(fpath))
+def load_word_vectors(fpath, transform_fpath=None):
+    model = fasttext.FastVector(vector_file=fpath)
+    if isinstance(transform_fpath, str):
+        model.apply_transform(transform_fpath)
+    return model
 
 
 def load_coling_data(dir_name):
