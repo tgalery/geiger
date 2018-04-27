@@ -114,3 +114,9 @@ def generate_n_grams(pseudo_word):
     return find_ngrams(pseudo_word, n_gram_len)
 
 
+def softmax_array_to_categorical(np_array):
+    argmax = max(np_array)
+    return np.array([1 if n == argmax else 0 for n in np_array])
+
+def softmax_to_categorical(np_matrix):
+    return np.apply_along_axis(softmax_array_to_categorical, 1, np_matrix)

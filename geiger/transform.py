@@ -11,8 +11,6 @@ from tqdm import tqdm
 from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS
 import string
 
-
-
 TOKENIZER = tt.Tokenizer()
 
 
@@ -110,12 +108,12 @@ class KerasTransformer:
                 word_emoji = is_emoji(word)
                 word_devanagari = is_devanagari(word)
 
-                # if embedding_vector is None and word_emoji:
-                #     embedding_vector = self.handle_emoji(word, embedding_lookup)
+                if embedding_vector is None and word_emoji:
+                    embedding_vector = self.handle_emoji(word, embedding_lookup)
 
-                # if embedding_vector is None and not word_emoji:
-                #     if word_devanagari:
-                #         embedding_vector = embedding_lookup.get_vector(word, "hi")
+                if embedding_vector is None and not word_emoji:
+                    if word_devanagari:
+                        embedding_vector = embedding_lookup.get_vector(word, "hi")
 
                 # Try generating char_ngrams
                 # if embedding_vector is None and not word_emoji and not word_devanagari:
