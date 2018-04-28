@@ -52,15 +52,15 @@ class KerasTransformer:
         """
         self.tokenizer.fit_on_texts(x_texts)
 
-    # if tok not in ENGLISH_STOP_WORDS and
-    #     len(tok) > 1 and not all([char.isdigit() or char in [",.:-[]'`"] for char in tok]) and
-    #     not is_devanagari(tok)
 
     @staticmethod
     def preprocess_text(text):
         tokens = TOKENIZER.tokenize(text.replace("'", " ' "))
         tokens = [Word(fix_repeated_token(token)).lemmatize() for token in tokens]
-        return ' '.join([tok for tok in tokens])
+        return ' '.join([tok for tok in tokens if tok not in ENGLISH_STOP_WORDS and
+                         len(tok) > 1 and not all([char.isdigit() or char in [",.:-[]'`"] for char in tok]) and
+                         not is_devanagari(tok)
+                         ])
 
     def texts_to_seq(self, texts, pad=True):
         """

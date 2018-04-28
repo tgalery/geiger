@@ -2,7 +2,6 @@
 import os
 
 import numpy as np
-import pandas as pd
 from textblob import TextBlob
 from tqdm import tqdm
 from geiger.libs.fastText_multilingual import fasttext
