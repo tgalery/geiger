@@ -1,6 +1,6 @@
 from sklearn.metrics import roc_auc_score, f1_score, classification_report
 from keras.callbacks import Callback
-from geiger.utils import softmax_to_categorical
+from geiger.coling import softmax_to_categorical
 
 
 def categorical_fmeasure(y_true, y_pred):

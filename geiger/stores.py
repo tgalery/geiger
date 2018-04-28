@@ -21,12 +21,15 @@ class MultiLangVectorStore:
 
     vector_stores = dict()
 
-    def __init__(self):
+    def __init__(self, langs=supported_langs, apply_transform=False):
 
-        for lang in self.supported_langs:
+        for lang in langs:
             vec_path = self.vector_locs[lang]
-            transform_path = self.transform_locs[lang]
-            self.vector_stores[lang] = load_word_vectors(vec_path, transform_fpath=transform_path)
+            if apply_transform:
+                transform_path = self.transform_locs[lang]
+                self.vector_stores[lang] = load_word_vectors(vec_path, transform_fpath=transform_path)
+            else:
+                self.vector_stores[lang] = load_word_vectors(vec_path)
 
     def get_vector(self, word, lang):
         if lang not in self.supported_langs:
@@ -43,6 +46,6 @@ class MultiLangVectorStore:
                 word_vec = self.get_vector(word, lang)
                 if word_vec:
                     vecs.append(word_vec)
-            except ValueError:
+            except (ValueError, KeyError):
                 pass
         return vecs

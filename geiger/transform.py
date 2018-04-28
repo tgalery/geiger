@@ -52,11 +52,15 @@ class KerasTransformer:
         """
         self.tokenizer.fit_on_texts(x_texts)
 
+    # if tok not in ENGLISH_STOP_WORDS and
+    #     len(tok) > 1 and not all([char.isdigit() or char in [",.:-[]'`"] for char in tok]) and
+    #     not is_devanagari(tok)
+
     @staticmethod
     def preprocess_text(text):
         tokens = TOKENIZER.tokenize(text.replace("'", " ' "))
         tokens = [Word(fix_repeated_token(token)).lemmatize() for token in tokens]
-        return ' '.join([tok for tok in tokens if tok not in ENGLISH_STOP_WORDS and len(tok) > 1 and not all([char.isdigit() or char in string.punctuation for char in tok])])
+        return ' '.join([tok for tok in tokens])
 
     def texts_to_seq(self, texts, pad=True):
         """
@@ -101,7 +105,7 @@ class KerasTransformer:
         embedding_matrix = np.zeros((self.rel_features, embedding_size))
         for word, i in tqdm(self.tokenizer.word_index.items()):
             if i >= self.rel_features:
-                return embedding_matrix
+                continue
             else:
 
                 embedding_vector = embedding_lookup.get_vector(word, "en")
@@ -111,21 +115,20 @@ class KerasTransformer:
                 if embedding_vector is None and word_emoji:
                     embedding_vector = self.handle_emoji(word, embedding_lookup)
 
-                if embedding_vector is None and not word_emoji:
-                    if word_devanagari:
-                        embedding_vector = embedding_lookup.get_vector(word, "hi")
+                # if embedding_vector is None and not word_emoji:
+                #     if word_devanagari:
+                #         embedding_vector = embedding_lookup.get_vector(word, "hi")
 
                 # Try generating char_ngrams
-                # if embedding_vector is None and not word_emoji and not word_devanagari:
-                #     char_ngrams = generate_n_grams(word)
-                #     embedding_vector = self.handle_oov_tokens(char_ngrams, embedding_lookup)
-                #     if not embedding_vector:
-                #         print("Generating word ngrams for word {} FAILED.".format(word))
+                if embedding_vector is None and not word_emoji and not word_devanagari:
+                    char_ngrams = generate_n_grams(word)
+                    embedding_vector = self.handle_oov_tokens(char_ngrams, embedding_lookup)
 
                 if embedding_vector is not None:
                     # TODO, we need to feature augumentation here if we are feeding this to the neuronet
                     embedding_matrix[i] = embedding_vector
                 else:
+                    print("Could not find vector for word {}.".format(word))
                     unhandled.append(word)
                     # Todo we are setting the vectors of <UNK> as zeros, maybe there's a better way
                     continue
