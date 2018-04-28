@@ -2,10 +2,11 @@
 import os
 
 import numpy as np
-import pandas as pd
 from textblob import TextBlob
 from tqdm import tqdm
 from geiger.libs.fastText_multilingual import fasttext
+import unicodedata
+
 
 def get_file_lines(fpath):
     output = os.popen('wc -l {}'.format(fpath)).read()
@@ -35,26 +36,6 @@ def get_word_blob(word):
     return TextBlob(word)
 
 
-def toxicity_label_map(labels):
-    labels['Tag'] = ['NAG' if t == 0 else 'OAG' for t in labels.iloc[:, 0:5].max(axis=1)]
-    return labels['Tag']
-
-
-def load_toxicity_data_set(fpath, column_name="comment_text"):
-    """
-    Load a toxic dataset
-    Args:
-        fpath: str: file where data is located
-        column_name: str or list: name of column to load:
-            X = comment_text
-            Y = ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate"]
-
-    Returns: np.array like object
-    """
-    dframe = pd.read_csv(fpath)
-    return dframe[column_name].fillna("fillna").values
-
-
 def to_np_array(word, *arr):
     """
     Transform a sequence of numbers into a numpy array.
@@ -74,22 +55,19 @@ def load_word_vectors(fpath, transform_fpath=None):
     return model
 
 
-def load_coling_data(dir_name):
-    """
-    Load Coling data
-    Args:
-        dir_name:
+def is_devanagari(word):
+    try:
+        return any((unicodedata.name(c).startswith("DEVANAGARI") for c in word))
+    except Exception as ex:
+        print("Got {}".format(ex))
+        return False
 
-    Returns:
-    """
-    col_names = ['id', 'text', 'class']
-    train = pd.read_csv(os.path.join(dir_name, "agr_en_train.csv"), names=col_names)
-    dev = pd.read_csv(os.path.join(dir_name, "agr_en_dev.csv"), names=col_names)
 
-    x_train = train["text"].fillna("fillna").values
-    y_train = train["class"].fillna("fillna").values
+def find_ngrams(input_list, n):
+    return ["".join(t) for t in zip(*[input_list[i:] for i in range(n)])]
 
-    x_dev = dev["text"].values
-    y_dev = dev["class"].values
-    return x_train, x_dev, y_train, y_dev
+
+def generate_n_grams(pseudo_word):
+    n_gram_len = min(len(pseudo_word), 3)
+    return find_ngrams(pseudo_word, n_gram_len)
 
