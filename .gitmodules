@@ -1,0 +1,3 @@
+[submodule "geiger/libs/ft_multilang"]
+	path = geiger/libs/ft_multilang
+	url = https://github.com/Babylonpartners/fastText_multilingual

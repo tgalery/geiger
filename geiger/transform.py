@@ -91,7 +91,7 @@ class KerasTransformer:
             return self.handle_oov_tokens(word_tokens, embedding_lookup)
         return None
 
-    def generate_embedding_matrix(self, embedding_lookup, embedding_size):
+    def generate_embedding_matrix(self, embedding_lookup, embedding_size, feat_augmenter=None):
         """
         Generate an embedding matrix [vocab_size, n_dimensions]
 
@@ -102,6 +102,8 @@ class KerasTransformer:
         Returns: np.array
         """
         unhandled = []
+        if feat_augmenter:
+            embedding_size += feat_augmenter.n_features
         embedding_matrix = np.zeros((self.rel_features, embedding_size))
         for word, i in tqdm(self.tokenizer.word_index.items()):
             if i >= self.rel_features:
@@ -126,6 +128,9 @@ class KerasTransformer:
 
                 if embedding_vector is not None:
                     # TODO, we need to feature augumentation here if we are feeding this to the neuronet
+                    if feat_augmenter:
+                        extra_feats = feat_augmenter.get_features(word)
+                        embedding_vector = np.concatenate((embedding_vector, extra_feats))
                     embedding_matrix[i] = embedding_vector
                 else:
                     print("Could not find vector for word {}.".format(word))
@@ -133,4 +138,4 @@ class KerasTransformer:
                     # Todo we are setting the vectors of <UNK> as zeros, maybe there's a better way
                     continue
         print("{} words were out of vocabulary.".format(len(unhandled)))
-        return embedding_matrix
+        return embedding_matrix, embedding_size

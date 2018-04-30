@@ -1,6 +1,7 @@
 from os import path
 
 from geiger.utils import load_file, get_word_blob
+import numpy as np
 
 ROOT_DIR = path.abspath(__file__).rsplit("/geiger", 1)[0]
 
@@ -19,6 +20,7 @@ def is_bad_word(word):
     """
     return word.lower() in BAD_WORDS
 
+
 def get_sentiment_vector(word):
     """
     Retrieve sentiment vector of word.
@@ -31,4 +33,15 @@ def get_sentiment_vector(word):
     if wb:
         return [wb.sentiment.polarity, wb.sentiment.subjectivity]
     else:
-        return [0, 0]
+        return [0., 0.]
+
+
+class FeatureAugmenter:
+    n_features = 3
+
+    @staticmethod
+    def get_features(word):
+
+        sent_vec = get_sentiment_vector(word)
+        sent_vec.append(float(is_bad_word(word)))
+        return np.asarray(sent_vec)

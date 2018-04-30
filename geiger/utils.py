@@ -4,7 +4,7 @@ import os
 import numpy as np
 from textblob import TextBlob
 from tqdm import tqdm
-from geiger.libs.fastText_multilingual import fasttext
+from geiger.libs.ft_multilang import fasttext
 import unicodedata
 
 
