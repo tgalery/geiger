@@ -1,6 +1,7 @@
 googletrans
 jupyter
 keras
+git+https://github.com/zuenko/keras-text.git
 numpy
 scipy
 scikit-learn
