@@ -13,8 +13,8 @@ class MultiLangVectorStore:
     }
 
     transform_locs = {
-        "en": path.join(REPO_ROOT, "geiger/libs/fastText_multilingual/alignment_matrices/en.txt"),
-        "hi": path.join(REPO_ROOT, "geiger/libs/fastText_multilingual/alignment_matrices/hi.txt"),
+        "en": path.join(REPO_ROOT, "geiger/libs/ft_multilang/alignment_matrices/en.txt"),
+        "hi": path.join(REPO_ROOT, "geiger/libs/ft_multilang/alignment_matrices/hi.txt"),
     }
 
     supported_langs = ["en", "hi"]

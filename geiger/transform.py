@@ -9,7 +9,6 @@ from geiger.utils import is_devanagari, generate_n_grams
 from textblob import Word
 from tqdm import tqdm
 from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS
-import string
 
 TOKENIZER = tt.Tokenizer()
 
@@ -56,10 +55,8 @@ class KerasTransformer:
     @staticmethod
     def preprocess_text(text):
         tokens = TOKENIZER.tokenize(text.replace("'", " ' "))
-        tokens = [Word(fix_repeated_token(token)).lemmatize() for token in tokens]
         return ' '.join([tok for tok in tokens if tok not in ENGLISH_STOP_WORDS and
-                         len(tok) > 1 and not all([char.isdigit() or char in [",.:-[]'`"] for char in tok]) and
-                         not is_devanagari(tok)
+                         len(tok) > 1 and not all([char.isdigit() or char in [",.:-[]'`"] for char in tok])
                          ])
 
     def texts_to_seq(self, texts, pad=True):
@@ -75,7 +72,6 @@ class KerasTransformer:
         if pad and self.max_seq_len > 0:
             return sequence.pad_sequences(text_seqs, maxlen=self.max_seq_len)
         return text_seqs
-
 
     @staticmethod
     def handle_oov_tokens(words, embedding_lookup):
@@ -98,6 +94,7 @@ class KerasTransformer:
         Args:
             embedding_lookup: dict: like interface that implements .get_vector and .get_vectors methods
             embedding_size: int: dimensionality of embedding
+            feat_augmenter: object: augments the features used for classification
 
         Returns: np.array
         """
@@ -117,9 +114,8 @@ class KerasTransformer:
                 if embedding_vector is None and word_emoji:
                     embedding_vector = self.handle_emoji(word, embedding_lookup)
 
-                # if embedding_vector is None and not word_emoji:
-                #     if word_devanagari:
-                #         embedding_vector = embedding_lookup.get_vector(word, "hi")
+                if embedding_vector is None and word_devanagari:
+                    embedding_vector = embedding_lookup.get_vector(word, "hi")
 
                 # Try generating char_ngrams
                 if embedding_vector is None and not word_emoji and not word_devanagari:
@@ -133,7 +129,7 @@ class KerasTransformer:
                         embedding_vector = np.concatenate((embedding_vector, extra_feats))
                     embedding_matrix[i] = embedding_vector
                 else:
-                    print("Could not find vector for word {}.".format(word))
+                    # print("Could not find vector for word {}.".format(word))
                     unhandled.append(word)
                     # Todo we are setting the vectors of <UNK> as zeros, maybe there's a better way
                     continue

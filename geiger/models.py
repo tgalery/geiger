@@ -1,6 +1,6 @@
 from keras.models import Model
 from keras.layers import Input, Dense, Embedding, GlobalMaxPooling1D, SpatialDropout1D, concatenate
-from keras.layers import GRU, Bidirectional, GlobalAveragePooling1D, TimeDistributed
+from keras.layers import GRU, Bidirectional, GlobalAveragePooling1D, BatchNormalization
 from geiger import evaluate
 
 
@@ -21,11 +21,10 @@ def build_pooled_gru(num_classes, vocab_size, max_seq_len, embedding_matrix,
     x = Embedding(vocab_size,
                   embedding_dims,
                   weights=[embedding_matrix])(sequence_input)
-    x = SpatialDropout1D(0.2)(x)
+    x = SpatialDropout1D(0.25)(x)
     x = Bidirectional(GRU(80, return_sequences=True))(x)
-    avg_pool = GlobalAveragePooling1D()(x)
-    max_pool = GlobalMaxPooling1D()(x)
-    conc = concatenate([avg_pool, max_pool])
+    x = BatchNormalization()(x)
+    conc = concatenate([GlobalAveragePooling1D()(x), GlobalMaxPooling1D()(x)])
     outp = Dense(num_classes, activation="softmax")(conc)
 
     model = Model(inputs=sequence_input, outputs=outp)
@@ -35,9 +34,8 @@ def build_pooled_gru(num_classes, vocab_size, max_seq_len, embedding_matrix,
     return model
 
 
-
 def build_token_model(max_seq_len, vocab_size, embed_dims, embed_matrix, token_encoder_model, num_classes,
-                trainable=True, output_activation='softmax'):
+                      trainable=True, output_activation='softmax'):
     """Builds a model using the given `text_model`
     Args:
         token_encoder_model: An instance of `SequenceEncoderBase` for encoding all the tokens within a document.
